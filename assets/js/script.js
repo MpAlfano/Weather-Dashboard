@@ -6,6 +6,7 @@ let cityTempEl = document.querySelector('#result-temp')
 let cityWindEl = document.querySelector('#result-wind')
 let cityHumidityEl = document.querySelector('#result-humidity')
 let cityUvEl = document.querySelector('#result-uv')
+let fiveDayForecast = document.querySelectorAll('#day')
 
 let citySearched = ""
 
@@ -18,17 +19,12 @@ let loadCity = function () {
 
     cityList.innerHTML = "";
 
-    
     for (let i = 0; i < 10; i++) {
-        let city = citiesAll[i];
 
-        console.log(citiesAll)
+        let city = citiesAll[i];
         let li = document.createElement("li");
         li.textContent = city;
         li.setAttribute("city-index", i);
-
-
-
         // Add bootstrap for button
         li.classList.add("btn-primary");
 
@@ -60,19 +56,21 @@ let storeCity = function () {
 
 
 
-//function to  display weather to dashboard when search submitted
-
-
 
 // use dt and moment to get the weather for each day
 
+
+let getCityForecas = function () {
+
+
+}
 
 
 
 //function to display clicked on city to dashboard
 
 
-//function to fetch
+//function to fetch and to display weather to dashboard when search submitted
 
 let getCityWeather = function () {
 
@@ -101,7 +99,7 @@ let getCityWeather = function () {
             console.log(lat)
             console.log(lon)
 
-            let apiUvUrl = "https://api.openweathermap.org/data/2.5/onecall?units=metric&lat=" + lat + "&lon=" + lon + "&exclude={part}&appid=" + apiKey
+            let apiUvUrl = "https://api.openweathermap.org/data/2.5/onecall?units=metric&lat=" + lat + "&lon=" + lon + "&appid=" + apiKey
 
             fetch(apiUvUrl)
                 .then(function (response) {
@@ -116,6 +114,14 @@ let getCityWeather = function () {
                     cityUvEl.innerHTML = "UV: " + data.current.uvi;
                     cityTempEl.innerHTML = "Temperature: " + data.current.temp + " °C"
                     console.log(data)
+
+                    fiveDayForecast.forEach(function (dayDiv){
+                        let i = parseInt(dayDiv.getAttribute("class"))  
+                        let timeDay = moment().add(i, 'days').format("L")
+
+                        dayDiv.textContent = "Temperature: " + data.daily[i].temp.day + " °C" + "Wind Speed: " + data.daily[i].wind_speed + " MPH";
+                        console.log(timeDay)
+                    })
 
                 })
         })
