@@ -132,7 +132,7 @@ let getCityWeather = function () {
                         let timeDay = moment().add(i, 'days').format("L")
 
 
-                        dayDiv.textContent = "(" + timeDay + ")  " + "Temperature: " + data.daily[i].temp.day + " °C" + "Wind Speed: " + data.daily[i].wind_speed + " MPH " + "Humidity: " + data.daily[i].humidity + " %";
+                        dayDiv.textContent = "(" + timeDay + ")  " + "Temperature: " + data.daily[i].temp.day + " °C" + " Wind Speed: " + data.daily[i].wind_speed + " MPH " + "Humidity: " + data.daily[i].humidity + " %";
                         console.log(timeDay)
                     })
                     fivePic1El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[1].weather[0].icon + "@2x.png");
