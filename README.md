@@ -13,4 +13,4 @@ This is an image preview of the page.
 
 ![Weather Dashboard](./assets/images/demo.png)
 
-[View Website Here]https://mpalfano.github.io/Weather-Dashboard/
+[View Website Here](https://mpalfano.github.io/Weather-Dashboard/)
