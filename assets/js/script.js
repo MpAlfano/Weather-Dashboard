@@ -75,8 +75,12 @@ let getCityWeather = function () {
         .then(function (response) {
 
             if (!response.ok) {
+                cityResultEl.textContent = "";
+                window.alert("No results")
                 throw new Error('Network response was not OK');
+
             }
+            cityResultEl.textContent = citySearched + "(" + moment().format("L") + ")"
             return response.json()
         })
         .then(function (data) {
@@ -158,7 +162,6 @@ search.addEventListener("click", function (event) {
 
     console.log(citySearched);
     citiesAll.unshift(citySearched);
-    cityResultEl.textContent = searchCityEl.value + "(" + moment().format("L") + ")"
     searchCityEl.value = "";
 
     storeCity();
@@ -178,8 +181,6 @@ cityList.addEventListener("click", function (event) {
     if (citySearched === "") {
         return;
     }
-
-    cityResultEl.textContent = citySearched + "(" + moment().format("L") + ")"
 
     console.log(citySearched)
     getCityWeather();
