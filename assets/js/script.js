@@ -7,6 +7,12 @@ let cityWindEl = document.querySelector('#result-wind')
 let cityHumidityEl = document.querySelector('#result-humidity')
 let cityUvEl = document.querySelector('#result-uv')
 let fiveDayForecast = document.querySelectorAll('#day')
+let fivePic1El = document.querySelector('#pic1')
+let fivePic2El = document.querySelector('#pic2')
+let fivePic3El = document.querySelector('#pic3')
+let fivePic4El = document.querySelector('#pic4')
+let fivePic5El = document.querySelector('#pic5')
+const currentPicEl = document.querySelector("#current-pic");
 
 let citySearched = ""
 
@@ -54,19 +60,6 @@ let storeCity = function () {
     localStorage.setItem("cities", JSON.stringify(citiesAll));
 }
 
-
-
-
-// use dt and moment to get the weather for each day
-
-
-let getCityForecas = function () {
-
-
-}
-
-
-
 //function to display clicked on city to dashboard
 
 
@@ -74,24 +67,27 @@ let getCityForecas = function () {
 
 let getCityWeather = function () {
 
+    console.log(citySearched)
     let apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + citySearched + "," + "&appid=" + apiKey
-    console.log(1);
+
     fetch(apiUrl)
+
         .then(function (response) {
-            console.log(2);
 
             if (!response.ok) {
                 throw new Error('Network response was not OK');
             }
             return response.json()
-
         })
         .then(function (data) {
-            console.log(3);
+
+            let weatherPic = data.weather[0].icon;
+            currentPicEl.setAttribute("src", "https://openweathermap.org/img/wn/" + weatherPic + "@2x.png");
+            currentPicEl.setAttribute("alt", data.weather[0].description);
 
             cityWindEl.innerHTML = "Wind Speed: " + data.wind.speed + " MPH";
             cityHumidityEl.innerHTML = "Humidity: " + data.main.humidity + "%";
-            
+
             console.log(data)
 
             let lat = data.coord.lat;
@@ -103,46 +99,51 @@ let getCityWeather = function () {
 
             fetch(apiUvUrl)
                 .then(function (response) {
-                 
+
                     if (!response.ok) {
                         throw new Error('Network response was not OK');
                     }
                     return response.json()
 
                 })
-                .then(function (data){
+                .then(function (data) {
+                        
+                        console.log(data.current.uvi)
+                        if (data.current.uvi < 4 ) {
+                            cityUvEl.setAttribute("class", "badge badge-success");
+                        }
+                        else if (data.current.uvi < 8) {
+                            cityUvEl.setAttribute("class", "badge badge-warning");
+                        }
+                        else {
+                            cityUvEl.setAttribute("class", "badge badge-danger");
+                        }
+
                     cityUvEl.innerHTML = "UV: " + data.current.uvi;
                     cityTempEl.innerHTML = "Temperature: " + data.current.temp + " °C"
                     console.log(data)
-
-                    fiveDayForecast.forEach(function (dayDiv){
-                        let i = parseInt(dayDiv.getAttribute("class"))  
+                    // To get weather for 5 day forecast
+                    fiveDayForecast.forEach(function (dayDiv) {
+                        let i = parseInt(dayDiv.getAttribute("data-value"))
                         let timeDay = moment().add(i, 'days').format("L")
 
-                        dayDiv.textContent = "Temperature: " + data.daily[i].temp.day + " °C" + "Wind Speed: " + data.daily[i].wind_speed + " MPH";
+
+                        dayDiv.textContent = "(" + timeDay + ")  " + "Temperature: " + data.daily[i].temp.day + " °C" + "Wind Speed: " + data.daily[i].wind_speed + " MPH " + "Humidity: " + data.daily[i].humidity + " %";
                         console.log(timeDay)
                     })
-
+                    fivePic1El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[1].weather[0].icon + "@2x.png");
+                    fivePic1El.setAttribute("alt", data.daily[1].weather[0].description);
+                    fivePic2El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[2].weather[0].icon + "@2x.png");
+                    fivePic2El.setAttribute("alt", data.daily[2].weather[0].description);
+                    fivePic3El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[3].weather[0].icon + "@2x.png");
+                    fivePic3El.setAttribute("alt", data.daily[3].weather[0].description)
+                    fivePic4El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[4].weather[0].icon + "@2x.png");
+                    fivePic4El.setAttribute("alt", data.daily[4].weather[0].description);
+                    fivePic5El.setAttribute("src", "https://openweathermap.org/img/wn/" + data.daily[5].weather[0].icon + "@2x.png");
+                    fivePic5El.setAttribute("alt", data.daily[5].weather[0].description);
                 })
         })
-    console.log(4);
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
 
 //event listener for search button
 
@@ -157,6 +158,7 @@ search.addEventListener("click", function (event) {
 
     console.log(citySearched);
     citiesAll.unshift(citySearched);
+    cityResultEl.textContent = searchCityEl.value + "(" + moment().format("L") + ")"
     searchCityEl.value = "";
 
     storeCity();
@@ -169,14 +171,18 @@ search.addEventListener("click", function (event) {
 
 cityList.addEventListener("click", function (event) {
     event.preventDefault()
+
     let cityClicked = event.target;
+    citySearched = cityClicked.textContent.trim()
 
-    //double check this later
-    if (cityClicked.value !== null) {
-
-
+    if (citySearched === "") {
+        return;
     }
 
+    cityResultEl.textContent = citySearched + "(" + moment().format("L") + ")"
+
+    console.log(citySearched)
+    getCityWeather();
 
 });
 
